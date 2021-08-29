@@ -11,12 +11,21 @@ const publicDirectoryPath = path.join(__dirname, '../public')
 
 app.use(express.static(publicDirectoryPath))
 
+let count = 0
+
 // app.get('/chat', (req, res) => {
 //     res.send('Chat is working')
 // })
 
-io.on('connection', () => {
+io.on('connection', (socket) => {
     console.log('New Web Socket connection')
+
+    socket.emit('countUpdated', count)
+
+    socket.on('increment', () => {
+        count++
+        io.emit('countUpdated', count)
+    })
 })
 
 server.listen(5000, () => {
